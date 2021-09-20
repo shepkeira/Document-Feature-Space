@@ -1,0 +1,100 @@
+explaining measures of fairness
+avoid the blackbox use of fairness metrics in machine learning by applying modern explainable ai methods to measures of fairness
+this handson article connects explainable ai with fairness measures and shows how modern explainability methods can enhance the usefulness of quantitative fairness metrics
+by using shap a popular explainable ai tool we can decompose measures of fairness and allocate responsibility for any observed disparity among each of the model is input features
+explaining these quantitative fairness metrics can reduce the concerning tendency to rely on them as opaque standards of fairness and instead promote their informed use as tools for understanding how model behavior differs between groups
+quantitative fairness metrics seek to bring mathematical precision to the definition of fairness in machine learning 1
+definitions of fairness however are deeply rooted in human ethical principles and so on value judgements that often depend critically on the context in which a machine learning model is being used
+this practical dependence on value judgements manifests itself in the mathematics of quantitative fairness measures as a set of tradeoffs between sometimes mutually incompatible definitions of fairness 2
+since fairness relies on contextdependent value judgements it is dangerous to treat quantitative fairness metrics as opaque blackbox measures of fairness 3 since doing so may obscure these important value judgment choices
+how shap can be used to explain measures of model fairness
+this article is not about how to choose the correct measure of model fairness but rather about explaining whichever metric you are using
+which fairness metric is most appropriate depends on the specifics of your context such as what laws apply how the output of the machine learning model impacts people and what value you place on various outcomes and hence tradeoffs
+here we will use the classic demographic parity metric since it is simple and closely connected to the legal notion of disparate impact
+demographic parity states that the output of the machine learning model should be equal between two or more groups
+the demographic parity difference is then a measure of how much disparity there is between model outcomes in two groups of samples
+since shap decomposes the model output into feature attributions with the same units as the original model output we can first decompose the model output among each of the input features using shap and then compute the demographic parity difference or any other fairness metric for each input feature separately using the shap value for that feature
+because the shap values sum up to the model is output the sum of the demographic parity differences of the shap values also sum up to the demographic parity difference of the whole model
+what shap fairness explanations look like in various simulated scenarios
+to help us explore the potential usefulness of explaining quantitative fairness metrics we consider a simple simulated scenario based on credit underwriting
+in our simulation there are four underlying factors that drive the risk of default for a loan
+income stability income amount spending restraint and consistency
+these underlying factors are not observed but they variously influence four different observable features
+job history reported income credit inquiries and late payments
+using this simulation we generate random samples and then train a nonlinear xgboost classifier to predict the probability of default check out the notebook version of this article for the associated python code
+the same process also works for any other model type supported by shap just remember that explanations of more complicated models of necessity hide more of the model is details
+by introducing sexspecific reporting errors into a fully specified simulation we can observe how the biases caused by these errors result in demographic parity differences between men and women
+in our simulated case the true labels if someone will default on a loan are statistically independent of sex
+so finding any disparity between men and women means one or both groups are being modeled incorrectly due to feature measurement errors labeling errors or model errors
+if the true labels you are predicting which might be different than the training labels you have access to are not statistically independent of the sensitive feature you are considering then even a perfect model with no errors will fail demographic parity
+in these cases fairness explanations can help you determine which sources of demographic disparity are valid and hence should be kept in the model and which sources are invalid and should be removed
+scenario a
+no reporting errors
+our first experiment is a simple baseline check where we refrain from introducing any sexspecific reporting errors
+while we could use any model output to measure demographic parity we use the continuous logodds score from a binary xgboost classifier
+as expected this baseline experiment results in no significant demographic parity difference between the credit scores of men and women
+we can see this by plotting the difference between the average credit score for women and men as a bar plot and noting that zero is close to the margin of error note that negative values mean women have a lower average predicted risk than men and positive values mean that women have a higher average predicted risk than men
+now we can use shap to decompose the model output among each of the model is input features and then compute the demographic parity difference on the component attributed to each feature
+as noted above because the shap values sum up to the model is output the sum of the demographic parity differences of the shap values for each feature sum up to the demographic parity difference of the whole model
+this means that the sum of the bars below equals the bar above the demographic parity difference of our baseline scenario model
+scenario b
+an underreporting bias for women is income
+in our baseline scenario we designed a simulation where sex had no impact on any of the features or labels used by the model
+here in scenario b we introduce an underreporting bias for women is income into the simulation
+the point here is not how realistic it would be for women is income to be underreported in the realworld but rather how we can identify that a sexspecific bias has been introduced and understand where it came from
+by plotting the difference in average model output default risk between women and men we can see that the income underreporting bias has created a significant demographic parity difference where women now have a higher risk of default than men
+if this were a real application this demographic parity difference might trigger an indepth analysis of the model to determine what might be causing the disparity
+while this investigation is challenging given just a single demographic parity difference value it is much easier given the perfeature demographic parity decomposition based on shap
+using shap we can see there is a significant bias coming from the reported income feature that is increasing the risk of women disproportionately to men
+this allows us to quickly identify which feature has the reporting bias that is causing our model to violate demographic parity
+it is important to note at this point how our assumptions can impact the interpretation of shap fairness explanations
+in our simulated scenario we know that women actually have identical income profiles to men so when we see that the reported income feature is biased lower for women than for men we know that has come from a measurement error bias in the reported income feature
+the best way to address this problem would be to figure out how to debias the measurement errors in that feature
+doing so would create a more accurate model that also has less demographic disparity
+however if we instead assume that women actually are making less money than men and so it is not just a reporting error then we can not just fix the reported income feature
+instead we have to carefully consider how best to account for real differences in default risk between two protected groups
+it is impossible to determine which of these two situations is happening using just the shap fairness explanation since in both cases the reported income feature will be responsible for an observed disparity between the predicted risks of men and women
+scenario c
+an underreporting bias for women is late payments
+to verify that shap demographic parity explanations can correctly detect disparities regardless of the direction of effect or source feature we repeat our previous experiment but instead of an underreporting bias for income we introduce an underreporting bias for women is late payment rates
+this results in a significant demographic parity difference for the model is output where now women have a lower average default risk than men
+and as we would hope the shap explanations correctly highlight the late payments feature as the cause of the model is demographic parity difference as well as the direction of the effect
+scenario d
+an underreporting bias for women is default rates
+the experiments above focused on introducing reporting errors for specific input features
+next we consider what happens when we introduce reporting errors on the training labels through an underreporting bias on women is default rates this means defaults are less likely to be reported for women than men
+interestingly for our simulated scenario this results in no significant demographic parity differences in the model is output
+we also see no evidence of any demographic parity differences in the shap explanations
+scenario e
+an underreporting bias for women is default rates take 2
+it may at first be surprising that no demographic parity differences were caused when we introduced an underreporting bias in women is default rates
+but this is because none of the four features in our simulation are significantly correlated with sex so none of them could be effectively used to model the bias we introduced into the training labels
+if we now instead provide a new feature to the model that is correlated with sex brand x purchase score then we see a demographic parity difference emerge as that feature is used by the model to capture the sexspecific bias in the training labels
+when we explain the demographic parity difference with shap we see that as expected the brand x purchase score feature drives the difference
+in this case it is not because we have a bias in how we measure the brand x purchase score feature but rather because we have a bias in our training label that gets captured by any input features that are sufficiently correlated with sex and so can serve as proxies for sex
+scenario f
+teasing apart multiple underreporting biases
+when there is a single cause of reporting bias then both the classic demographic parity test on the model is output and the shap explanation of the demographic parity test capture the same bias effect though the shap explanation can often have more statistical significance since it isolates the feature causing the bias
+but what happens when there are multiple causes of bias occurring in a dataset
+in this experiment we introduce two such biases an underreporting of women is default rates and an underreporting of women is job history
+these biases tend to offset each other in the global average and so a demographic parity test on the model is output shows no measurable disparity
+however if we look at the shap explanation of the demographic parity difference we clearly see both counteracting biases
+identifying multiple potentially offsetting bias effects can be important since while on average there is no disparate impact on men or women there is disparate impact on individuals
+for example in this simulation women who have not shopped at brand x will receive a lower credit score than they should have because of the bias present in job history reporting
+how introducing a protected feature can help distinguish between label bias and feature bias
+in scenario f we were able to pick apart two distinct forms of bias one coming from job history underreporting and one coming from default rate underreporting
+however the bias from default rate underreporting was not attributed to the default rate label but rather to the brand x purchase score feature that happened to be correlated with sex
+this still leaves us with some uncertainty about the true source of demographic parity differences since any difference attributed to an input feature could be due to an issue with that feature or due to an issue with the training labels
+it turns out that in this case we can help disentangle label bias from feature bias by introducing sex as a variable directly into the model
+the goal of introducing sex as an input feature is to cause the label bias to fall entirely on the sex feature leaving the feature biases untouched
+so we can then distinguish between label biases and feature biases by comparing the results of scenario f above to our new scenario g below
+this of course creates an even stronger demographic parity difference than we had before but that is fine since our goal here is not bias mitigation but rather bias understanding
+the shap explanation for scenario g shows that all of the demographic parity difference that used to be attached to the brand x purchase score feature in scenario f has now moved to the sex feature while none of the demographic parity difference attached to the job history feature in scenario f has moved
+this can be interpreted to mean that all of the disparity attributed to brand x purchase score in scenario f was due to label bias while all of the disparity attributed to job history in scenario f was due to feature bias
+note that this trick of introducing a protected feature into a model in order to separate label bias from feature bias depends on the model training procedure placing almost all of the label bias on the protected feature
+this works for a default xgboost model but it will not happen for example if you turn on columnwise subsampling in xgboost since that will force the bias to be shared among features correlated with the protected feature a similar creditspreading effect also happens for ridgeregression penalized linear models
+conclusion
+fairness is a complex topic where clean mathematical answers almost always come with caveats and depend on assumptions or value judgements
+this means that it is particularly important to not just use fairness metrics as blackboxes but rather seek to understand how these metrics are computed and what aspects of your model and training data are impacting any disparities you observe
+decomposing quantitative fairness metrics using shap can reduce their opacity
+i hope the fairness explanations demonstrated here help you better wrestle with the underlying issues inherent in fairness evaluation and so help reduce the risk of unintended consequences when you use fairness metrics in real world contexts

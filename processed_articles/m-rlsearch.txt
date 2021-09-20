@@ -1,0 +1,74 @@
+reinforcement learning assisted search ranking
+at sajari we have had great success using reinforcement learning to continuously and automatically improve our search result rankings
+we can even benchmark algorithm improvement over time across different datasets languages and completely different search ranking problems
+machine learning is increasingly part of the search ranking algorithm in all search technology
+however due to the immutability of most search technology indexes reinforcement learning typically incurs massive performance overheads due to the frequent scoring updates so to date more focus has been spent on learntorank for these technologies
+we use both learntorank and reinforcement learning techniques this article is focused more on the latter
+learn to rank
+learntorank systems take a gold standard set of human labelled or feedback based eg
+click data queryresult pairs combined with generated features to create machine learning models to improve the ranking of search results
+in the past search ranking has been mostly human configured and is thus immediately limited by one person is bias and their ability to visualise the dataset as a whole
+as a result these rankings typically work well for a portion of queries and fail hopelessly for others
+fixing the failures without causing problems elsewhere is very hard
+a good analogy would be pulling a bunch of levers the issue at top of mind improves but it is not immediately clear how this impacts everything else
+search is not a simple problem and humans can not balance this problem across thousands or even millions of different queries
+configuring standard search is like pulling levers
+learntorank is designed to partially take this away from human control and instead let machine learning do the optimisation at an individual query level
+typically this means computing the results with a static human configured approach this is fast and efficient and then reranking the top x results with a machine learning model not so efficient
+this approach is pretty smart and has been adopted by some of the major open source search technologies to produce great outcomes
+but there are downsides a it still requires a lot of engineering work to get up and running and b the queryresult pair index scores are fixed or at best seldomly updated
+this means the algorithm inputs remain static a step forward but using reinforcement it is possible to do even better and improve results at a much faster rate
+reinforcement learning
+the basic idea of reinforcement learning is quite simple use feedback to reinforce hence strengthen positive outcomes
+instead of making large changes infrequently reinforcement learning makes frequent incremental changes
+there are many upsides to this such as continuously improving results and faster surfacing of other potential results
+poorly performing results also tend to fall away quickly through rolling experimentation
+in our case high performing clicks sales signups etc search results for a given query indicate a positive outcome which is fed back into the queryresult intersection score in the search index
+this score is a type of confidence interval that balances the uncertainty of the sample size with observed performance
+confidence intervals are used in all sorts of places for example in reddit is article ranking
+wilson confidence intervals are described nicely by evan miller where he shows how lots of rating algorithms make the mistake of using the simple calculation of average ratings instead which is highly unreliable for smaller samples
+directly quoted from evan
+given the ratings i have there is a 95 chance that the real fraction of positive ratings is at least what
+in the search world a positive rating can mean different things a search result was clicked or led to a later event such as a sale etc
+we mostly focus on clicks as there is significantly more available data faster to get to higher confidence but we also use later events if there is sufficient data
+when using clicks to determine ratings you need to correct for position bias short clicks dissatisfaction with the clicked result and various other factors
+the positive ratings then roughly correlate to results clicked more frequently and negative ratings to those less frequently clicked
+the confidence interval helps to correct for the sample size by calculating a probability distribution
+so at this point we have a confidence interval distribution for each queryresult pair
+we then do something similar to a bayesian bandit algorithm which randomly selects a score from our confidence interval distribution for each queryresult pair
+when the sample number is low the interval is broad but as the sample number increases the confidence interval tightens and the best results begin to consistently score higher
+chris stucchio is article on bandit algorithms illustrates sharpening of the probability distribution with increase sample size
+measuring ranking success
+in order to determine success we need to be able to measure how well we are ranking across all queries
+to do this we currently use normalised discounted cumulative gain ndcg
+this is explained nicely by hugh williams in a post on measuring search relevance
+in a nutshell ndcg describes how optimally a set of results are ranked against the best possible ordering idcg
+the ideal discounted cumulative gain idcg provides a benchmark score for the optimal result ordering and the dcg calculation gives a score for an actual result set
+the ratio of dcg idcg then gives us ndcg
+this isn not perfect as our idcg calculation is determining the ideal ordering using the same performance data as the reinforcement but keep in mind it would be impossible to get human scores for all our queries millions and also our reinforcement learning score is only one of many ranking algorithm inputs so in practice this is ok
+the more data we collect the more result experimentation occurs and the higher the idcg value climbs hence the ranking also needs to improve to keep ndcg in step
+monitoring ranking performance
+in practice ndcg is continuously climbing for most of our search indexes as the reinforcement learning optimises the index scores but occasionally it drops
+to monitor this and our overall performance we use bigquery to periodically process the most recent search and click data terabytes to calculate ranking performance
+typical queries process many gigabytes of data for each day included in the calculation and this query takes only a few seconds to process
+the output looks as follows
+ndcg this week and change from last week by collection
+aside from direct ranking model changes and other experiments reinforcement learning improves our average ndcg by 1 per week which is pretty impressive
+this type of ranking performance analysis can also easily be broken down by all the other data we collect
+e
+g
+by company language location useragent feature flag ranking experiment custom user variables etc
+we can not even read all the languages we support but we know exactly how well their ranking is performing
+aside from the ranking efficiency idcg also allows us to see which individual queries have no good possible results
+from a customer perspective this helps to show content gaps in user demand
+as we expand our reporting capabilities this year our customers will get even more granular access to these and more analytics regarding content and customer intent and we will continue to drive alerting and optimisation of the underlying technology
+conclusion
+reinforcement learning is an amazing technique to assist the selflearning ranking of search results
+it undoubtedly helps to automate the optimisation of our search technology bringing it closer to our goal of ranking information with human intelligence but millions of times faster
+the down sides of reinforcement learning are more subtle such as managing expectations at day zero with no historical performance data
+it is not easy to tell a potential customer their performance will improve noticeably once they start sending production queries
+we also need better ways to explain probabilistic optimisation to businesses as conceptually people still tend to focus on individual searches and the particular result they expected to top rank
+it is difficult to tell people the result set they are looking at is not the result set but actually just one probabilistic sample projection based on past historical performance
+to make it even more complicated boosting trees and neural networks make the ranking even harder to explain
+although selflearning indexes are rare today they will become the standard in years to come as machine learning further influences data and the underlying storage structures
+recently learned index structures have been the topic of much discussion we see this as just the beginning of huge changes to the way data is stored and processed in both databases search indexes and hybrid approaches

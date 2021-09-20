@@ -1,0 +1,88 @@
+vectors are over hashes are the future of ai
+artificial intelligence has been built on the back of vector arithmetic
+recent advances show for certain ai applications this can actually be drastically outperformed memory speed etc by other binary representations such as neural hashes without significant performance trade off
+once you work with things like neural hashes it becomes apparent many areas of ai can move away from vectors to hash based structures and trigger an enormous speed up in ai advancement
+this article is a brief introduction in to the thinking behind this and why this may well end up being an enormous shift
+hashes
+a hash function is any function that can be used to map data of arbitrary size to fixedsize values
+the values returned by a hash function are called hash values hash codes digests or simply hashes
+you can read more about hashes here
+the example from wikipedia is illustrated below
+hashes are great for trading off accuracy data storage size performance retrieval speed and more
+importantly they are probabilistic in nature so multiple input items can potentially share the same hashes
+this is interesting because at the core the trade off is giving up slower exactness for extremely fast high probability
+the analogy here would be the choice between a 1 second flight to somewhere random in the suburb of your choosing in any city in the world vs a 10 hour trip putting you at the exact house you wanted in the city of your choice
+the former is almost always better navigating within a suburb in 10 hours is a piece of cake
+when thinking about vectors floats are the data representation of choice
+although they are more absolute in nature than hashes they are still not exact either
+more on floats below
+floats
+to understand ai you need to understand how computers represent non integer based numbers
+if you have not read up on this you can do here
+the problem with floating point numbers is they take up a decent amount of space are pretty complex to do calculations with and are still an approximation
+watching rob pike talk about a bignum calculator was prob the first time i thought about it much
+it is bothered me a lot since
+thanks rob
+the binary representation can also be wildly different for tiny numerical changes with respect to vector calculations that have virtually zero impact on model predictions
+for example
+take 0
+65 vs 0
+66 which in float64 64 bit floating point binary can be represented by these two binary numbers respectively
+11111111100100110011001100110011001100110011001100110011001101
+11111111100101000111101011100001010001111010111000010100011111
+it is not easy to see but with just that 1 numerical change almost half 25 of the 64 bits are different
+from a vector perspective in a matrix calculation these two numbers are very very similar but in the underlying binary where all the heavy lifting happens they are worlds apart
+our brains definitely don not work like this so they obviously don not use floating point binary representations to store numbers
+at least it sounds like a stupid thing for neurons to do except there are people that can remember over 60000 decimal places of pi so maybe i have no idea
+but seriously our brains are visual and visually our brain is neural networks are great at handling fractional numbers representing intensities and such
+but when you think of a half or a quarter i will bet you immediately visualised something like a glass half or quarter full or a pizza or something else
+you likely weren not thinking of a mantissa and exponent
+one idea commonly used to speed float calculations up and use less space is dropping the resolutions to float16 16 bit and even float8 8 bit which are much faster to compute
+the downside here is the obvious loss of resolution
+so you are saying float arithmetic is slowbad
+not quite
+actually it turns out this is a problem people have spent their careers on
+chip hardware and their instruction sets have been designed to make this more efficient and have more calculations processed in parallel so they can be solved faster
+gpus and tpus are now also used because they handle mass float based vector arithmetic even faster
+you can brute force more speed but do you need to
+you can also give up resolution but again do you need to
+floats aren not absolute either anyway
+it is less about being slow here but more about how to go much faster
+neural hashes
+so it turns out binary comparisons like xor on bit sets can be computed much much faster than float based arithmetic
+so what if you could represent the 0
+65 and 0
+66 in a binary hash space that was locality sensitive
+could that make models much faster in terms of inference
+note
+looking at a single number is a contrived example but for vectors containing many floats the hash can actually also compress the relationship between all the dimensions which is where the magic really happens
+turns out there is a family of hash algorithms to do just this called locality sensitive hashing lsh
+the closer the original items the closer the bits in their hashes are the same
+this concept is nothing new though except that newer techniques have found added advantages
+historically lsh used techniques like random projections quantisation and such but they had the disadvantage of requiring a large hash space to retain precision so the benefits were somewhat negated
+it is trivial for a single float but what about vectors with high dimensionality many floats
+so the new trick with neural hashes or sometimes called learntohash is to replace existing lsh techniques with hashes created by neural networks
+the resulting hashes can be compared using the very fast hamming distance calculation to estimate their similarity
+this initially sounds complicated but in reality it isn not too difficult
+the neural network optimizes a hash function that
+retains almost perfect information compared to the original vector
+produces hashes much smaller than the original vector size
+is significantly faster for computations
+this means you get the best of both worlds a smaller binary representation that can be used for very fast logical calculations with virtually unchanged information resolution
+use cases
+the original use case we were investigating was for approximate nearest neighbours ann for dense information retrieval
+this process allows us to search information using vector representations so we can find things that are conceptually similar
+hence why the locality sensitivity in the hash is so important
+we have taken this much further now and use hashes much more broadly for fast and approximate comparisons of complex data
+dense information retrieval
+how many databases can you think of
+likely a lot
+how about search indexes
+likely very few and most of those are based on the same old tech anyway
+this is largely because historically language was a rules based problem
+tokens synonyms stemming lemmatisation and more have occupied very very smart people for their entire careers and they are still not solved
+larry page google founder has been quoted as saying search won not be a solved problem in our lifetime
+think about that for a second the biggest minds of a generation literally billions of dollars of investment and it is unlikely to be solved
+search tech has lagged databases mainly due to language problems yet we have seen a revolution in language processing over the last few years and it is still speeding up
+from a tech perspective we see neural based hashes dropping the barrier for new search and database technology us included
+if you are working on hash based neural networks and indexes id love to hear your thoughts on what is coming next
