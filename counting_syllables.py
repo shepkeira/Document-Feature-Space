@@ -1,17 +1,6 @@
 VOWELS = ['a', 'e', 'i', 'o', 'u']
 import re
 
-# input: a single word
-# output: the number of syllables in the word
-def count_syllables_in_word(word):
-    # process word
-    dealt_with_es = deal_with_es(word)
-    # deal with pairs before ys to account for lying -> li/ing where it should be 2 syllables
-    dealt_with_pairs = deal_with_pairs(dealt_with_es)
-    dealt_with_ys = deal_with_ys(dealt_with_pairs)
-    # return the count of "syllables" (vowels)
-    return count_syllables(dealt_with_ys)
-
 # input: a single word (already processed)
 # output: the count of vowels in a word
 def count_syllables(word):
@@ -62,8 +51,12 @@ def vowel_y_e(word, next_index, last_index, word_length):
     if (next_index <= word_length - 1 and last_index >= 0 and
         word[next_index] == 'e' and word[last_index] in VOWELS):
             index_after_e = next_index + 1
-            if index_after_e <= word_length - 1 and word[index_after_e] != 'r':
-                word = re.sub('ye', 'y', word)
+            if index_after_e < word_length:
+                letter_after_e = word[index_after_e]
+                if letter_after_e != 'r':
+                    word = re.sub('ye', 'yz', word)
+            else:
+                word = re.sub('ye', 'yz', word)
     return word
 
 # input: a word, the index of the character after y, the index of the character before y, the index of the y, the length of the word
@@ -99,7 +92,38 @@ def deal_with_ys(word):
         index_y = word.find('y')
         next_index = index_y + 1
         last_index = index_y - 1
-        word = vowel_y_e(word, next_index, last_index, word_length)
-        word = vowel_y_or_y_vowel(word, next_index, last_index, index_y, word_length)  
-        word = consonant_y(word, next_index, last_index, word_length)
+        # turn y's into i's first
+        word_after_consonant_y = consonant_y(word, next_index, last_index, word_length)
+        # change ys into consonants
+        if word_after_consonant_y != word:
+            word = word_after_consonant_y
+            if 'y' in word_after_consonant_y:
+                index_y = word.find('y')
+                next_index = index_y + 1
+                last_index = index_y - 1
+            else:
+                break
+        word_after_vowel_y_e = vowel_y_e(word, next_index, last_index, word_length)
+        if word_after_vowel_y_e != word:
+            word = word_after_vowel_y_e
+            if 'y' in word_after_vowel_y_e:
+                index_y = word.find('y')
+                next_index = index_y + 1
+                last_index = index_y - 1
+            else:
+                break
+        word_after_vowel_y_or_y_vowel = vowel_y_or_y_vowel(word, next_index, last_index, index_y, word_length)  
+        if word_after_vowel_y_or_y_vowel != word:
+                word = word_after_vowel_y_or_y_vowel
     return word
+
+# input: a single word
+# output: the number of syllables in the word
+def count_syllables_in_word(word):
+    # process word
+    dealt_with_es = deal_with_es(word)
+    # deal with pairs before ys to account for lying -> li/ing where it should be 2 syllables
+    dealt_with_pairs = deal_with_pairs(dealt_with_es)
+    dealt_with_ys = deal_with_ys(dealt_with_pairs)
+    # return the count of "syllables" (vowels)
+    return count_syllables(dealt_with_ys)

@@ -5,6 +5,11 @@
 python main.py
 ```
 
+# To Run Tests
+```
+python -m unittest discover -s tests -p '*_test.py'
+```
+
 # Notes
 - Does not account for prossessive apostrophes
 - Considers multiple contractions ya'll've -> ya will have
