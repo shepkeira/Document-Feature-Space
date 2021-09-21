@@ -72,6 +72,15 @@ def get_file_contents():
         print("Articles are not found.")
         return 0
 
+def write_metrics_to_file(all_metrics):
+    file_contents = ""
+    for file_name, metrics in all_metrics.items():
+        file_contents += file_name + ": " + (' ').join(map(str, metrics)) + "\n"
+    path = os.path.join(os.getcwd(), "metrics", "final_metrics")
+    f = open(path, 'w')
+    f.write(file_contents)
+    f.close()
+
 def main():
     # Read in data
     files_contents = get_file_contents()
@@ -86,6 +95,7 @@ def main():
 
     # Retrieve the Processed Files
     proccessed_files_contents = get_processed_file_contents()
+    all_metrics = {}
     for file_name, file_contents in proccessed_files_contents.items():
         # Calculate the metrics for each file
         # order of metrics:
@@ -100,7 +110,8 @@ def main():
         # - flesch reading ease score
         metrics = calculate_metrics(file_contents)
         # display metrics and the files associated with each
-        print(file_name + ": " + str(metrics))
+        all_metrics[file_name] = metrics
+    write_metrics_to_file(all_metrics)
 
 # runs main to start
 if __name__ == "__main__":
