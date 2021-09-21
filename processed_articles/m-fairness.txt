@@ -3,10 +3,10 @@ avoid the blackbox use of fairness metrics in machine learning by applying moder
 this handson article connects explainable ai with fairness measures and shows how modern explainability methods can enhance the usefulness of quantitative fairness metrics
 by using shap a popular explainable ai tool we can decompose measures of fairness and allocate responsibility for any observed disparity among each of the model is input features
 explaining these quantitative fairness metrics can reduce the concerning tendency to rely on them as opaque standards of fairness and instead promote their informed use as tools for understanding how model behavior differs between groups
-quantitative fairness metrics seek to bring mathematical precision to the definition of fairness in machine learning 1
+quantitative fairness metrics seek to bring mathematical precision to the definition of fairness in machine learning
 definitions of fairness however are deeply rooted in human ethical principles and so on value judgements that often depend critically on the context in which a machine learning model is being used
-this practical dependence on value judgements manifests itself in the mathematics of quantitative fairness measures as a set of tradeoffs between sometimes mutually incompatible definitions of fairness 2
-since fairness relies on contextdependent value judgements it is dangerous to treat quantitative fairness metrics as opaque blackbox measures of fairness 3 since doing so may obscure these important value judgment choices
+this practical dependence on value judgements manifests itself in the mathematics of quantitative fairness measures as a set of tradeoffs between sometimes mutually incompatible definitions of fairness
+since fairness relies on contextdependent value judgements it is dangerous to treat quantitative fairness metrics as opaque blackbox measures of fairness since doing so may obscure these important value judgment choices
 how shap can be used to explain measures of model fairness
 this article is not about how to choose the correct measure of model fairness but rather about explaining whichever metric you are using
 which fairness metric is most appropriate depends on the specifics of your context such as what laws apply how the output of the machine learning model impacts people and what value you place on various outcomes and hence tradeoffs
@@ -66,7 +66,7 @@ next we consider what happens when we introduce reporting errors on the training
 interestingly for our simulated scenario this results in no significant demographic parity differences in the model is output
 we also see no evidence of any demographic parity differences in the shap explanations
 scenario e
-an underreporting bias for women is default rates take 2
+an underreporting bias for women is default rates take
 it may at first be surprising that no demographic parity differences were caused when we introduced an underreporting bias in women is default rates
 but this is because none of the four features in our simulation are significantly correlated with sex so none of them could be effectively used to model the bias we introduced into the training labels
 if we now instead provide a new feature to the model that is correlated with sex brand x purchase score then we see a demographic parity difference emerge as that feature is used by the model to capture the sexspecific bias in the training labels

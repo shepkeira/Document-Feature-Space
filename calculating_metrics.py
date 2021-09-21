@@ -37,6 +37,15 @@ def min_syllables_per_word(file_contents):
     return min
 
 # input: an array of sentences which are arrays of words
+# output: the number of syllables in a word
+def syllables_per_word(file_contents):
+    syllables_per_file = []
+    for sentence in file_contents:
+        for word in sentence:
+            syllables_per_file.append(count_syllables_in_word(word))
+    return syllables_per_file
+
+# input: an array of sentences which are arrays of words
 # output: the average number of syllables in words for a file
 def avg_syllables_per_word(file_contents):
     syllables_per_file = syllables_per_word(file_contents)
@@ -46,15 +55,6 @@ def avg_syllables_per_word(file_contents):
         return total/count
     else:
         return 0
-
-# input: an array of sentences which are arrays of words
-# output: the number of syllables in a word
-def syllables_per_word(file_contents):
-    syllables_per_file = []
-    for sentence in file_contents:
-        for word in sentence:
-            syllables_per_file.append(count_syllables_in_word(word))
-    return syllables_per_file
 
 # input: an array of sentences which are arrays of words
 # output: a count of all the sentences in a file
@@ -127,7 +127,7 @@ def calculate_metrics(file_contents):
     avg_words_per_sentence = avg_words_per_sen(file_contents)
     flesch_reading_ease_score = calculate_flesch_reading_ease_score(file_contents)
     return [
-        total_words, #check on this one I think its off a bit
+        total_words,
         max_syllables,
         min_syllables,
         round(avg_syllables, 2),

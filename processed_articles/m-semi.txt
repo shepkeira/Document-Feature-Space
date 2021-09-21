@@ -25,14 +25,14 @@ unfortunately that task typically requires human intervention to classify the co
 there are plenty of other scenarios for ssl models
 however not all ai scenarios can directly be tackled using ssl
 there are a few essential characteristics that should be present on a problem to be effectively solvable using ssl
-1sizable unlabeled dataset
+sizable unlabeled dataset
 in ssl scenarios the seize of the unlabeled dataset should be substantially bigger than the labeled data
 otherwise the problem can be simply addressed using supervised algorithms
-2inputoutput proximity symmetry
+inputoutput proximity symmetry
 ssl operates by inferring classification for unlabeled data based on proximity with labeled data points
 inverting that reasoning ssl scenarios entail that if two data points are part of the same cluster determined by a kmeans algo or similar their outputs are likely to be in close proximity as well
 complementarily if two data points are separated by a low density area their output should not be close
-3relatively simple labeling lowdimension nature of the problem
+relatively simple labeling lowdimension nature of the problem
 in ssl scenarios it is important that the inference of the labeled data doesn not become a problem more complicated than the original problem
 this is known in ai circles as the vapnik principle which essentially states that in order to solve a problem we should not pick an intermediate problem of a higher order of complexity
 also problems that use datasets with many dimensions or attributes are likely to become really challenging for ssl algorithms as the labeling task will become very complex

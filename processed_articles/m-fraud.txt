@@ -15,7 +15,7 @@ better yet the machine learning algorithms behind the ai get smarter over time
 related article
 how data science is transforming financial systems
 let is look at three aidriven approaches that can be used separately or better yet together to identify malicious bots
-1 supervised machine learning traditional machine learning is supervised
+supervised machine learning traditional machine learning is supervised
 in supervised machine learning a model is trained on a labeled dataset
 this means a domainexpert human developer must label sample data and select what kind of input and output sample data will feed the algorithm
 machine learning algorithms are used to make predictions about unavailable future or unseen data based on the labeled sample data
@@ -28,17 +28,17 @@ in many cases not enough sample data exists rendering the algorithm ineffective 
 supervised machine learning is good for learning patterns but if the pattern changes they may not recognize a threat
 engineers have to continually monitor whether things have changed continue to label data and train it then test and retrain the models
 it is a big loop that is always turning
-2 unsupervised machine learning in unsupervised machine learning the algorithms are not dependent on a human domain expert labeling the data
+unsupervised machine learning in unsupervised machine learning the algorithms are not dependent on a human domain expert labeling the data
 the algorithms are trained to look for anomalies in the data and trigger alerts to notify fraud operations teams to investigate potential threats
 once the anomaly is flagged teams can label the data and use it to feed supervised machine learning algorithms
 this accelerates the process of training models and improves their effectiveness
 unsupervised machine learning is often used to segment data into clusters that can be further analyzed to identify patterns
 two wellknown applications of unsupervised machine learning include segmenting markets for targeting customers and anomalyfraud detection
-3 using natural language processing nlp to learn features from request headers natural language processing npl is the study of programming computers to process and analyze large amounts of natural textual data and nlp models can be used to automatically learn features from request headers requiring a reduced amount of input from security domain experts
+using natural language processing nlp to learn features from request headers natural language processing npl is the study of programming computers to process and analyze large amounts of natural textual data and nlp models can be used to automatically learn features from request headers requiring a reduced amount of input from security domain experts
 using recent mldriven advances in nlp you can avoid turning fields into features and instead treat the headers as sentences or paragraphs then bundle all them together into a single feature vector
 this requires far less collaboration with domain experts and increases performance as the model takes all features into consideration simultaneously
 traditional machine learning limits the algorithm is performance any time you develop a feature you have to decide what information to keep and what information to do without
 inputting a field into a model that includes a range such as the passing of time requires normalizing the data it contains
 this reduces accuracy because you can not include infinite ranges
 by training a model to treat headers as natural language you don not have to omit information
-advances in nlp are being driven by open ai and other credible organizations such as gpt2
+advances in nlp are being driven by open ai and other credible organizations such as gpt

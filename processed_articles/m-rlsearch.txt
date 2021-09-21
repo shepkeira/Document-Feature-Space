@@ -28,7 +28,7 @@ this score is a type of confidence interval that balances the uncertainty of the
 confidence intervals are used in all sorts of places for example in reddit is article ranking
 wilson confidence intervals are described nicely by evan miller where he shows how lots of rating algorithms make the mistake of using the simple calculation of average ratings instead which is highly unreliable for smaller samples
 directly quoted from evan
-given the ratings i have there is a 95 chance that the real fraction of positive ratings is at least what
+given the ratings i have there is a chance that the real fraction of positive ratings is at least what
 in the search world a positive rating can mean different things a search result was clicked or led to a later event such as a sale etc
 we mostly focus on clicks as there is significantly more available data faster to get to higher confidence but we also use later events if there is sufficient data
 when using clicks to determine ratings you need to correct for position bias short clicks dissatisfaction with the clicked result and various other factors
@@ -53,7 +53,7 @@ to monitor this and our overall performance we use bigquery to periodically proc
 typical queries process many gigabytes of data for each day included in the calculation and this query takes only a few seconds to process
 the output looks as follows
 ndcg this week and change from last week by collection
-aside from direct ranking model changes and other experiments reinforcement learning improves our average ndcg by 1 per week which is pretty impressive
+aside from direct ranking model changes and other experiments reinforcement learning improves our average ndcg by per week which is pretty impressive
 this type of ranking performance analysis can also easily be broken down by all the other data we collect
 e
 g

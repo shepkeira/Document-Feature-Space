@@ -11,8 +11,8 @@ the example from wikipedia is illustrated below
 hashes are great for trading off accuracy data storage size performance retrieval speed and more
 importantly they are probabilistic in nature so multiple input items can potentially share the same hashes
 this is interesting because at the core the trade off is giving up slower exactness for extremely fast high probability
-the analogy here would be the choice between a 1 second flight to somewhere random in the suburb of your choosing in any city in the world vs a 10 hour trip putting you at the exact house you wanted in the city of your choice
-the former is almost always better navigating within a suburb in 10 hours is a piece of cake
+the analogy here would be the choice between a second flight to somewhere random in the suburb of your choosing in any city in the world vs a hour trip putting you at the exact house you wanted in the city of your choice
+the former is almost always better navigating within a suburb in hours is a piece of cake
 when thinking about vectors floats are the data representation of choice
 although they are more absolute in nature than hashes they are still not exact either
 more on floats below
@@ -25,19 +25,17 @@ it is bothered me a lot since
 thanks rob
 the binary representation can also be wildly different for tiny numerical changes with respect to vector calculations that have virtually zero impact on model predictions
 for example
-take 0
-65 vs 0
-66 which in float64 64 bit floating point binary can be represented by these two binary numbers respectively
-11111111100100110011001100110011001100110011001100110011001101
-11111111100101000111101011100001010001111010111000010100011111
-it is not easy to see but with just that 1 numerical change almost half 25 of the 64 bits are different
+take
+vs
+which in float bit floating point binary can be represented by these two binary numbers respectively
+it is not easy to see but with just that numerical change almost half of the bits are different
 from a vector perspective in a matrix calculation these two numbers are very very similar but in the underlying binary where all the heavy lifting happens they are worlds apart
 our brains definitely don not work like this so they obviously don not use floating point binary representations to store numbers
-at least it sounds like a stupid thing for neurons to do except there are people that can remember over 60000 decimal places of pi so maybe i have no idea
+at least it sounds like a stupid thing for neurons to do except there are people that can remember over decimal places of pi so maybe i have no idea
 but seriously our brains are visual and visually our brain is neural networks are great at handling fractional numbers representing intensities and such
 but when you think of a half or a quarter i will bet you immediately visualised something like a glass half or quarter full or a pizza or something else
 you likely weren not thinking of a mantissa and exponent
-one idea commonly used to speed float calculations up and use less space is dropping the resolutions to float16 16 bit and even float8 8 bit which are much faster to compute
+one idea commonly used to speed float calculations up and use less space is dropping the resolutions to float bit and even float bit which are much faster to compute
 the downside here is the obvious loss of resolution
 so you are saying float arithmetic is slowbad
 not quite
@@ -50,9 +48,9 @@ floats aren not absolute either anyway
 it is less about being slow here but more about how to go much faster
 neural hashes
 so it turns out binary comparisons like xor on bit sets can be computed much much faster than float based arithmetic
-so what if you could represent the 0
-65 and 0
-66 in a binary hash space that was locality sensitive
+so what if you could represent the
+and
+in a binary hash space that was locality sensitive
 could that make models much faster in terms of inference
 note
 looking at a single number is a contrived example but for vectors containing many floats the hash can actually also compress the relationship between all the dimensions which is where the magic really happens
